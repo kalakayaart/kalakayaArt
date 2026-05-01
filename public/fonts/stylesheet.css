@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Mustica Pro';
+    src: url('MusticaPro-SemiBold.woff2') format('woff2'),
+        url('MusticaPro-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
