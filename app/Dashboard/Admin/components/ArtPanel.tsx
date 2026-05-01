@@ -59,7 +59,7 @@ const STATUS_META: Record<ArtStatus, { label: string; bg: string; color: string;
   not_for_sale: { label: "Not for Sale",  bg: "#F1EFE8", color: "#5F5E5A", dot: "#9E9C95" },
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://kalakaya.art/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
 // ─── API ───────────────────────────────────────────────────────────────────────
 //
 // create / update send a multipart/form-data request so multer can handle

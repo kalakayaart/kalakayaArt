@@ -1,7 +1,7 @@
 import { Artist, Art } from "../Types/artist";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://kalakaya.art/api";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
 
 // 🔹 Generic fetch helper
 async function apiFetch<T>(endpoint: string): Promise<T> {
