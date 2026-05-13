@@ -83,10 +83,10 @@ const Footer: React.FC = () => {
             </p>
 
             <div className="mt-3 flex flex-col gap-3 text-[16px]" style={{ fontFamily: "EB Garamond, serif" }}>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-[#000000] ">
                 <PhoneIcon /> +977-9843562694
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-[#000000]">
                 <MailIcon /> info@kalakaya.art
               </div>
             </div>
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
               Policies
             </p>
 
-            <div className="mt-3 flex flex-col gap-3 text-[16px]" style={{ fontFamily: "EB Garamond, serif" }}>
+            <div className="mt-3 flex flex-col gap-3 text-[16px] text-[#000000]" style={{ fontFamily: "EB Garamond, serif" }}>
               {["Tax Policy", "Privacy Policy", "Cookie Policy", "Terms of Use"].map((item) => (
                 <a key={item} href="#" className="hover:underline">
                   {item}
@@ -113,7 +113,7 @@ const Footer: React.FC = () => {
               Help and Assistance
             </p>
 
-            <div className="mt-3 flex flex-col gap-3 text-[16px]" style={{ fontFamily: "EB Garamond, serif" }}>
+            <div className="mt-3 flex flex-col gap-3 text-[16px] text-[#000000]" style={{ fontFamily: "EB Garamond, serif" }}>
               {["Placing Order", "Shipping and Delivery", "Return", "FAQ"].map((item) => (
                 <a key={item} href="#" className="hover:underline">
                   {item}
