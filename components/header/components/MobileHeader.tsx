@@ -13,7 +13,7 @@ export default function MobileHeader({
 }: MobileHeaderProps) {
   return (
     <div className="flex md:hidden justify-between items-center p-4 border-b bg-white relative z-50">
-      
+
       <Link href="/">
         <Image
           src="/header/Logo.png"
@@ -28,7 +28,7 @@ export default function MobileHeader({
       <button
         onClick={() => setMobileMenuOpen(prev => !prev)}
         aria-label="Toggle menu"
-        className="p-2 relative z-50"
+        className="p-2 relative z-50 color-black"
       >
         {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
       </button>

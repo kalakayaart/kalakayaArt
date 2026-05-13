@@ -93,12 +93,11 @@ export default function DesktopNav({
                           openDropdown === link.label ? null : link.label
                         )
                       }
-                      className="text-black hover:underline"
+                      className="text-black hoveupdate all r:underline"
                       style={{
                         fontFamily: "Mustica Pro",
                         fontWeight: 600,
                         fontSize: "24px",
-                        color: "#000000"
                       }}
                     >
                       {link.label}
