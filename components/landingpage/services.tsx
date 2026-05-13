@@ -103,7 +103,7 @@ export default function Services() {
 
                 {/* Heading */}
                 <div className="mb-8 md:mb-10">
-                    <h2 className="font-semibold text-[24px] md:text-[28px] font-[Mustica_Pro]">
+                    <h2 className="font-semibold text-black text-[24px] md:text-[28px] font-[Mustica_Pro]">
                         What We Do
                     </h2>
                 </div>

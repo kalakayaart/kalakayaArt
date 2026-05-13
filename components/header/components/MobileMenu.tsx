@@ -22,7 +22,7 @@ export default function MobileMenu({
               onClick={() =>
                 setMobileDropdown(mobileDropdown === link.label ? null : link.label)
               }
-              className="w-full flex justify-between p-4 font-bold"
+              className="w-full flex justify-between p-4 font-bold color-black"
             >
               {link.label}
               <ChevronDown />
@@ -44,7 +44,7 @@ export default function MobileMenu({
           <Link
             key={link.label}
             href={link.href}
-            className="block p-4 font-bold"
+            className=" block p-4 font-bold"
             onClick={() => setMobileMenuOpen(false)}
           >
             {link.label}

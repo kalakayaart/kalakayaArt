@@ -22,7 +22,8 @@ export default function AboutSection() {
       <div className="w-full md:w-1/2 flex flex-col space-y-6 md:space-y-12">
 
         {/* MAIN HEADING */}
-        <h2 className="text-[24px] md:text-[32px] font-semibold leading-relaxed font-[Mustica_Pro,sans-serif]text-black">
+        {/* MAIN HEADING */}
+        <h2 className="text-[24px] md:text-[32px] font-semibold leading-relaxed font-[Mustica_Pro,sans-serif] text-black">
           Explore and celebrate the art and heritage that defines Nepal.
         </h2>
 

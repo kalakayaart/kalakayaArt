@@ -275,6 +275,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0.01em",
+              color: "#000000"
             }}
           >
             Peer Exchange
@@ -287,6 +288,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000"
             }}
           >
             Where multiple researchers are in residence simultaneously, the program facilitates structured peer seminars and critical discussion. Residents are also drawn into Kalā Kāya's broader programming where relevant, bringing them into contact with artists, curators, and cultural practitioners whose work intersects with their own.

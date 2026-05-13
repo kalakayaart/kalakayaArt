@@ -70,9 +70,8 @@ export default function DesktopNav({
 
       {/* ================= NAVBAR ================= */}
       <nav
-        className={`hidden md:flex sticky top-0 w-full transition-all duration-300 ${
-          scrolled ? "shadow-md" : ""
-        }`}
+        className={`hidden md:flex sticky top-0 w-full transition-all duration-300 ${scrolled ? "shadow-md" : ""
+          }`}
         style={{
           zIndex: 40,
           height: "53px",
