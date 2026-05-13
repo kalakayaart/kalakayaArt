@@ -150,7 +150,7 @@ export default function Services() {
                                 </div>
 
                                 {/* Text */}
-                                <p className="text-center uppercase text-[16px] md:text-[18px] font-[EB_Garamond] hover:underline cursor-pointer">
+                                <p className="text-center uppercase text-[16px] md:text-[18px] font-[EB_Garamond] hover:underline cursor-pointer text-black">
                                     {service.title}
                                 </p>
                             </div>

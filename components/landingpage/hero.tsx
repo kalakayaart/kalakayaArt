@@ -85,6 +85,7 @@ But the masters admire the line.
                                 fontSize: "16px",
                                 lineHeight: "150%",
                                 letterSpacing: "1%",
+                                color: "#000000",
                                 textAlign: "justify",
                                 verticalAlign: "middle",
                             }}
@@ -92,7 +93,7 @@ But the masters admire the line.
                             {current.artworkDetails.map((item, i) => (
                                 <p
                                     key={i}
-                                    className="cursor-pointer hover:text-[#DC2626]"
+                                    className="cursor-pointer hover:text-[#000000]"
                                 >
                                     {item}
                                 </p>

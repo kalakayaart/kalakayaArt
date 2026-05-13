@@ -26,9 +26,10 @@ export default function Residency() {
             style={{
               fontFamily: "EB Garamond, serif",
               fontWeight: 400,
-              lineHeight: "1.6",
+              lineHeight: "1.1",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             The Kalā Kāya Researcher in Residence is Nepal's first dedicated residency program for researchers working in cultural, architectural, and archaeological heritage. Based in Maharajgunj, Kathmandu, the program brings scholars into direct, sustained engagement with Nepal's heritage landscape, its expert communities, and its primary source holdings. It proceeds from a simple conviction: that the most consequential questions in this field are best pursued in proximity to the material and the people who know it.
@@ -59,6 +60,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             <p>
@@ -96,6 +98,7 @@ export default function Residency() {
             lineHeight: "1.6",
             letterSpacing: "0",
             textAlign: "left",
+            color: "#000000",
           }}
         >
           The residency is based in Maharajgunj, a historic neighborhood in Kathmandu and home to the majority of the city's diplomatic missions and international institutions. The neighborhood sits within easy reach of the Valley's major heritage sites, research libraries, and archival institutions. Pashupatinath, Boudhanath, and Swayambhunath, all UNESCO World Heritage Sites, are within fifteen minutes. The National Archives of Nepal and the Kaiser Library are accessible within half an hour. Patan, with its museum and surviving workshop traditions, is a short drive away.
@@ -124,6 +127,7 @@ export default function Residency() {
             fontWeight: 600,
             lineHeight: "1.1",
             letterSpacing: "0%",
+            color: "#000000",
           }}
         >
           What the Residency Offers
@@ -140,6 +144,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0.01em",
+              color: "#000000",
             }}
           >
             Site Visits and Field Engagements
@@ -152,6 +157,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             Guided visits to heritage sites across the Kathmandu Valley, led by specialists in conservation, epigraphy, architectural history, and archaeology. Visits are structured around the resident's research interests rather than a fixed itinerary, and are intended to generate questions as much as to answer them. For researchers whose work extends beyond the Valley, optional extended field visits to highland districts including Mustang and Dolpo are available.
@@ -187,6 +193,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0",
+              color: "#000000",
             }}
           >
             Faculty and Expert Meetings
@@ -199,10 +206,11 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             Structured meetings with academics, historians, and conservation professionals working across Nepal's universities, museums, and heritage institutions. These are not ceremonial introductions.
-            They 
+            They
             are working sessions, organized around the resident's project, with scholars who have agreed to engage substantively with the research.
           </p>
         </div>
@@ -218,6 +226,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0.01em",
+              color: "#000000",
             }}
           >
             Archival and Library Access
@@ -230,6 +239,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             Supported access to archival holdings, photographic records, and documentary collections held by Kalā Kāya and its partner institutions, including materials in Nepali, Sanskrit, and Tibetan. The Kalā Kāya research team assists residents in identifying relevant holdings and navigating collections that are not always straightforward to access independently.
@@ -294,6 +304,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0",
+              color: "#000000",
             }}
           >
             Research Development Support
@@ -306,6 +317,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             The Kalā Kāya curatorial and research team is available throughout the residency for consultation on research-in-progress, logistical support for field visits, and introductions to contacts within the scholarly and practitioner community.
@@ -341,6 +353,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0",
+              color: "#000000",
             }}
           >
             Public Lecture and Publication
@@ -353,6 +366,7 @@ export default function Residency() {
               lineHeight: "1.6",
               letterSpacing: "0",
               textAlign: "left",
+              color: "#000000",
             }}
           >
             The residency culminates in a public lecture hosted by Kalā Kāya, open to scholars, students, practitioners, and the general public. Research developed during the residency is considered for publication through the Kalā Kāya digital archive and Publications imprint.
@@ -369,6 +383,7 @@ export default function Residency() {
             fontWeight: 600,
             lineHeight: "1.3",
             letterSpacing: "0",
+            color: "#000000",
           }}
         >
           Program Structure
@@ -381,6 +396,7 @@ export default function Residency() {
             lineHeight: "1.6",
             letterSpacing: "0",
             textAlign: "left",
+            color: "#000000",
           }}
         >
           <p>
@@ -399,64 +415,67 @@ export default function Residency() {
       </section>
 
       {/* ================= FEES ================= */}
-<section className="w-full max-w-[1240px] mt-16 mx-auto px-4 md:px-6">
+      <section className="w-full max-w-[1240px] mt-16 mx-auto px-4 md:px-6">
 
-  <h3
-    className="text-[20px] md:text-[24px] mb-6"
-    style={{
-      fontFamily: "Poppins, sans-serif",
-      fontWeight: 600,
-      lineHeight: "1.3",
-      letterSpacing: "0",
-    }}
-  >
-    Fees
-  </h3>
+        <h3
+          className="text-[20px] md:text-[24px] mb-6"
+          style={{
+            fontFamily: "Poppins, sans-serif",
+            fontWeight: 600,
+            lineHeight: "1.3",
+            letterSpacing: "0",
+            color: "#000000",
+          }}
+        >
+          Fees
+        </h3>
 
-  {/* TABLE STYLE GRID */}
-  <div
-    className="grid grid-cols-2 gap-y-3 text-[15px] md:text-[16px] mb-8 max-w-[400px]"
-    style={{
-      fontFamily: "EB Garamond, serif",
-      fontWeight: 400,
-      lineHeight: "1.75",
-    }}
-  >
-    <div>One Month</div>
-    <div>USD 800</div>
+        {/* TABLE STYLE GRID */}
+        <div
+          className="grid grid-cols-2 gap-y-3 text-[15px] md:text-[16px] mb-8 max-w-[400px]"
+          style={{
+            fontFamily: "EB Garamond, serif",
+            fontWeight: 400,
+            lineHeight: "1.75",
+            color: "#000000",
+          }}
+        >
+          <div>One Month</div>
+          <div>USD 800</div>
 
-    <div>Two Months</div>
-    <div>USD 1,500</div>
+          <div>Two Months</div>
+          <div>USD 1,500</div>
 
-    <div>Six Months</div>
-    <div>USD 4,000</div>
-  </div>
+          <div>Six Months</div>
+          <div>USD 4,000</div>
+        </div>
 
-  {/* DESCRIPTION TEXT */}
-  <div
-    className="text-[15px] md:text-[16px] space-y-4"
-    style={{
-      fontFamily: "EB Garamond, serif",
-      fontWeight: 400,
-      lineHeight: "1.6",
-      letterSpacing: "0",
-      textAlign: "left",
-    }}
-  >
-    <p>
-      The fee covers accommodation in Maharajgunj, all programmed site visits and guided field engagements within the Kathmandu Valley, facilitation of faculty and expert meetings, access to Kalā Kāya's archival holdings and partner institution networks, research development support, and hosting of the public lecture. Kalā Kāya will host a welcome and farewell dinner.
-    </p>
+        {/* DESCRIPTION TEXT */}
+        <div
+          className="text-[15px] md:text-[16px] space-y-4"
+          style={{
+            fontFamily: "EB Garamond, serif",
+            fontWeight: 400,
+            lineHeight: "1.6",
+            letterSpacing: "0",
+            textAlign: "left",
+            color: "#000000",
+          }}
+        >
+          <p>
+            The fee covers accommodation in Maharajgunj, all programmed site visits and guided field engagements within the Kathmandu Valley, facilitation of faculty and expert meetings, access to Kalā Kāya's archival holdings and partner institution networks, research development support, and hosting of the public lecture. Kalā Kāya will host a welcome and farewell dinner.
+          </p>
 
-    <p>
-      Residents are responsible for international and domestic travel, daily meals, personal health insurance, research materials, and optional highland field trip costs.
-    </p>
+          <p>
+            Residents are responsible for international and domestic travel, daily meals, personal health insurance, research materials, and optional highland field trip costs.
+          </p>
 
-    <p>
-      Researchers are encouraged to write to us directly to discuss their circumstances or inquire about fee adjustments.
-    </p>
-  </div>
+          <p>
+            Researchers are encouraged to write to us directly to discuss their circumstances or inquire about fee adjustments.
+          </p>
+        </div>
 
-</section>
+      </section>
 
       {/* ================= HOW TO APPLY ================= */}
       <section className="w-full max-w-[1240px] mt-16 mx-auto px-4 md:px-6">
@@ -467,6 +486,7 @@ export default function Residency() {
             fontWeight: 600,
             lineHeight: "1.3",
             letterSpacing: "0",
+            color: "#000000",
           }}
         >
           How to Apply?
@@ -479,6 +499,7 @@ export default function Residency() {
             lineHeight: "1.6",
             letterSpacing: "0",
             textAlign: "left",
+            color: "#000000",
           }}
         >
           <p>
@@ -500,6 +521,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0",
+              color: "#000000",
             }}
           >
             The Residence
@@ -520,6 +542,7 @@ export default function Residency() {
               fontWeight: 600,
               lineHeight: "1.3",
               letterSpacing: "0",
+              color: "#000000",
             }}
           >
             The Residence
