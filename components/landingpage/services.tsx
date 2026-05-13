@@ -57,7 +57,7 @@ export default function Services() {
                         [index]: (current + 1) % total,
                       };
                     });
-                  }, 2);
+                  }, 3000);
                 }
               }, 1000); // delay before starting slide
             }

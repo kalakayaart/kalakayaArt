@@ -61,31 +61,25 @@ But the masters admire the line.
 
             {/* HERO TEXT */}
            <h1
-  className="text-gray-900 whitespace-pre-line mb-6"
-  style={{
-    fontFamily: "EB Garamond, serif",
-    fontWeight: 400,
-    fontStyle: "italic",
-    fontSize: "16px",
-    lineHeight: "150%",
-    letterSpacing: "1%",
-    verticalAlign: "middle",
-  }}
->
-  {current.heroText}
-</h1>
+   className="text-gray-900 whitespace-pre-line mb-6 font-garamond italic"
+   style={{
+     fontSize: "clamp(16px, 4vw, 20px)",
+     lineHeight: "1.6",
+     letterSpacing: "0.01em",
+     verticalAlign: "middle",
+   }}
+ >
+   {current.heroText}
+ </h1>
 
             {/* ARTWORK DETAILS */}
             <div
-              className="space-y-1 text-gray-800"
+              className="space-y-1 text-gray-800 font-garamond font-extrabold"
               style={{
-  fontFamily: "EB Garamond, serif",
-  fontWeight: 800,
-  fontStyle: "normal",
-  fontSize: "16px",
-  lineHeight: "150%",
-  letterSpacing: "1%",
-  textAlign: "justify",
+  fontSize: "clamp(14px, 3.5vw, 16px)",
+  lineHeight: "1.5",
+  letterSpacing: "0.01em",
+  textAlign: "left",
   verticalAlign: "middle",
 }}
             >

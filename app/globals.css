@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-mustica: "Mustica Pro", sans-serif;
+  /* Variable is now provided by next/font/google in layout.tsx */
 }
 
 @theme inline {
@@ -10,6 +12,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-mustica: var(--font-mustica);
+  --font-garamond: var(--font-eb-garamond);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,15 +23,37 @@
   }
 }
 
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Mustica Pro", sans-serif;
+  font-family: var(--font-mustica);
+  font-weight: 400; /* Set default weight to normal for better clarity */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
+
 @font-face {
   font-family: "Mustica Pro";
   src: url("/fonts/MusticaPro-SemiBold.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
+}
+
+/* Base styles for clearer mobile text */
+p, li {
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
