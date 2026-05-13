@@ -13,7 +13,7 @@ export default function MobileMenu({
   if (!mobileMenuOpen) return null;
 
   return (
-    <div className="md:hidden bg-white shadow-lg max-h-[calc(100vh-80px)] overflow-y-auto">
+    <div className="md:hidden bg-white shadow-lg max-h-[calc(100vh-80px)] overflow-y-auto color-black">
 
       {NAV_LINKS.map((link) =>
         link.dropdown ? (
@@ -44,7 +44,7 @@ export default function MobileMenu({
           <Link
             key={link.label}
             href={link.href}
-            className="block p-4 font-bold text-black"
+            className="color-black block p-4 font-bold text-black"
             onClick={() => setMobileMenuOpen(false)}
           >
             {link.label}
