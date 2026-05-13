@@ -24,13 +24,16 @@ export default function MobileHeader({
           priority
         />
       </Link>
-
       <button
-        onClick={() => setMobileMenuOpen(prev => !prev)}
+        onClick={() => setMobileMenuOpen((prev) => !prev)}
         aria-label="Toggle menu"
-        className="p-2 relative z-50 color-black"
+        className="p-2 relative z-50 text-black"
       >
-        {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+        {mobileMenuOpen ? (
+          <X size={26} className="text-black" />
+        ) : (
+          <Menu size={26} className="text-black" />
+        )}
       </button>
 
     </div>
