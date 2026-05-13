@@ -98,6 +98,7 @@ export default function DesktopNav({
                         fontFamily: "Mustica Pro",
                         fontWeight: 600,
                         fontSize: "24px",
+                        color: "#000000"
                       }}
                     >
                       {link.label}
