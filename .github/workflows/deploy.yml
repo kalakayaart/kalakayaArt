@@ -1,0 +1,42 @@
+name: CI/CD Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ~/kalakayaArt
+
+            echo "Pull latest code"
+            git pull origin main
+
+            echo "Install frontend dependencies"
+            npm install
+
+            echo "Build frontend"
+            npm run build
+
+            echo "Install backend dependencies"
+            cd Backend
+            npm install
+
+            echo "Restart PM2 services"
+            pm2 restart Frontend --update-env
+            pm2 restart backend --update-env
+
+            echo "Deployment completed"
