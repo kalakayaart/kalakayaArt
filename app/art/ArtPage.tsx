@@ -43,7 +43,7 @@ export default function ArtPage({ arts }: { arts?: Art[] }) {
 
       {/* SAME SIDE PADDING AS SEARCH BAR */}
       <main style={{ padding: "40px 16px 80px" }} className="md:!px-[100px]">
-        <h1>Art</h1>
+        <h1 >Art</h1>
 
         {/* SEARCH + FILTER (UNCHANGED) */}
         <div
