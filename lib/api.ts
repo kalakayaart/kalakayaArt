@@ -1,11 +1,13 @@
 import { Artist, Art } from "../Types/artist";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+
+const API_URL = `${API_BASE}/api`;
 
 // 🔹 Generic fetch helper
 async function apiFetch<T>(endpoint: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${endpoint}`, {
+  const res = await fetch(`${API_URL}${endpoint}`, {
     headers: { "Content-Type": "application/json" },
     cache: "no-store",
   });
@@ -15,7 +17,7 @@ async function apiFetch<T>(endpoint: string): Promise<T> {
     throw new Error(`API Error ${res.status}: ${text}`);
   }
 
-  return res.json() as Promise<T>; // ✅ ensure correct typing
+  return res.json() as Promise<T>;
 }
 
 // 🔹 Artists
@@ -38,3 +40,5 @@ export const fetchArtsByArtist = async (
     return apiFetch<Art[]>(`/arts/artist/${artistId}`);
   }
 };
+
+export { API_BASE };

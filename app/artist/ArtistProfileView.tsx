@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { Artist, Art } from "@/Types/artist";
+import { API_BASE } from "@/lib/api";
 
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/footer";
@@ -12,25 +14,41 @@ type Props = {
   arts: Art[];
 };
 
-export default function ArtistProfileView({ artist, arts }: Props) {
+export default function ArtistProfileView({
+  artist,
+  arts,
+}: Props) {
   const router = useRouter();
 
   const [selectedArt, setSelectedArt] = useState<Art | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState<string>("");
+  const [modalContent, setModalContent] = useState("");
 
-  // set default selected art
+  // Default selected artwork
   useEffect(() => {
     if (arts?.length > 0) {
       setSelectedArt(arts[0]);
     }
   }, [arts]);
 
+  // Convert relative upload paths → full backend URLs
+  const getImageUrl = (url?: string) => {
+    if (!url) return "";
+
+    if (url.startsWith("http")) return url;
+
+    const BASE =
+      API_BASE.replace("/api", "");
+
+    return `${BASE}${url}`;
+  };
+
   const openModal = (content?: string) => {
     if (!content) {
       alert("Content not available");
       return;
     }
+
     setModalContent(content);
     setShowModal(true);
   };
@@ -38,15 +56,15 @@ export default function ArtistProfileView({ artist, arts }: Props) {
   return (
     <div
       style={{
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
-        backgroundColor: "#fff",
+        background: "#fff",
       }}
     >
       <Header />
 
-      {/* BACK BUTTON */}
+      {/* Back Button */}
       <div
         style={{
           display: "flex",
@@ -62,13 +80,14 @@ export default function ArtistProfileView({ artist, arts }: Props) {
             cursor: "pointer",
             fontSize: 14,
             fontFamily: "Avenir, sans-serif",
+            color: "#000",
           }}
         >
           ← Back
         </button>
       </div>
 
-      {/* ── Mobile override: stack the 2-col grid on small screens ── */}
+      {/* Responsive Styles */}
       <style jsx>{`
         .profile-main {
           display: grid;
@@ -77,27 +96,53 @@ export default function ArtistProfileView({ artist, arts }: Props) {
           padding: 24px 60px 48px;
           flex: 1;
         }
+
         @media (max-width: 768px) {
           .profile-main {
             grid-template-columns: 1fr;
             gap: 32px;
             padding: 20px 16px 40px;
           }
+
+          .artist-header {
+            flex-direction: column;
+          }
+
+          .artist-image {
+            margin-left: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 400px;
+          }
+
+          .artist-bio {
+            margin-left: 0 !important;
+            max-height: none !important;
+          }
+
+          .art-image {
+            height: auto !important;
+          }
         }
-        .artist-bio::-webkit-scrollbar {
+
+        .artist-bio::-webkit-scrollbar,
+        .art-list::-webkit-scrollbar {
           width: 5px;
         }
-        .artist-bio::-webkit-scrollbar-thumb {
+
+        .artist-bio::-webkit-scrollbar-thumb,
+        .art-list::-webkit-scrollbar-thumb {
           background: rgba(0, 0, 0, 0.15);
           border-radius: 10px;
         }
       `}</style>
 
       <main className="profile-main">
-        {/* ================= LEFT ================= */}
+        {/* LEFT SECTION */}
         <div>
-          {/* IMAGE + NAME */}
+          {/* Artist Header */}
           <div
+            className="artist-header"
             style={{
               display: "flex",
               gap: 20,
@@ -106,8 +151,9 @@ export default function ArtistProfileView({ artist, arts }: Props) {
             }}
           >
             <img
-              src={artist.photo_url}
+              src={getImageUrl(artist.photo_url)}
               alt={artist.full_name}
+              className="artist-image"
               style={{
                 width: 200,
                 height: 200,
@@ -138,28 +184,36 @@ export default function ArtistProfileView({ artist, arts }: Props) {
 
               <div
                 style={{
-                  fontFamily: "Avenir, sans-serif",
-                  fontSize: 13,
                   display: "flex",
                   flexDirection: "column",
                   gap: 6,
+                  fontFamily: "Avenir, sans-serif",
+                  fontSize: 13,
                 }}
               >
-               <a
-                href={artist.cv}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                CV
-              </a>
+                {artist.cv && (
+                  <a
+                    href={getImageUrl(artist.cv)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      color: "#000",
+                    }}
+                  >
+                    CV
+                  </a>
+                )}
 
                 <span
-                  style={{ cursor: "pointer", textDecoration: "underline" }}
-                  onClick={() => openModal(artist.exhibitions)}
+                  onClick={() =>
+                    openModal(artist.exhibitions)
+                  }
+                  style={{
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  }}
                 >
                   Exhibitions
                 </span>
@@ -167,7 +221,7 @@ export default function ArtistProfileView({ artist, arts }: Props) {
             </div>
           </div>
 
-          {/* BIO */}
+          {/* Bio */}
           <div
             className="artist-bio"
             style={{
@@ -177,15 +231,17 @@ export default function ArtistProfileView({ artist, arts }: Props) {
               paddingRight: 8,
               fontFamily: "Avenir, sans-serif",
               fontSize: 13,
-              lineHeight: 1.65,
+              lineHeight: 1.7,
+              whiteSpace: "pre-wrap",
             }}
           >
             {artist.bio}
           </div>
         </div>
 
-        {/* ================= RIGHT ================= */}
+        {/* RIGHT SECTION */}
         <div
+          className="art-list"
           style={{
             display: "flex",
             flexDirection: "column",
@@ -195,15 +251,18 @@ export default function ArtistProfileView({ artist, arts }: Props) {
             paddingRight: 10,
           }}
         >
-          {arts.map((art, i) => (
+          {arts.map((art, index) => (
             <div
-              key={`${art.id}-${i}`}
+              key={`${art.id}-${index}`}
               onClick={() => setSelectedArt(art)}
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+              }}
             >
               <img
-                src={art.image_url}
+                src={getImageUrl(art.image_url)}
                 alt={art.title}
+                className="art-image"
                 style={{
                   width: "100%",
                   height: 420,
@@ -215,14 +274,29 @@ export default function ArtistProfileView({ artist, arts }: Props) {
                 style={{
                   textAlign: "right",
                   fontFamily: "Avenir, sans-serif",
+                  marginTop: 8,
                 }}
               >
-                <div style={{ fontSize: 15, fontWeight: 500 }}>
+                <div
+                  style={{
+                    fontSize: 15,
+                    fontWeight: 500,
+                  }}
+                >
                   {art.title}
                 </div>
-                <div style={{ fontSize: 13 }}>{art.year ?? "—"}</div>
-                <div style={{ fontSize: 13 }}>{art.medium ?? "—"}</div>
-                <div style={{ fontSize: 13 }}>{art.dimensions ?? "—"}</div>
+
+                <div style={{ fontSize: 13 }}>
+                  {art.year ?? "—"}
+                </div>
+
+                <div style={{ fontSize: 13 }}>
+                  {art.medium ?? "—"}
+                </div>
+
+                <div style={{ fontSize: 13 }}>
+                  {art.dimensions ?? "—"}
+                </div>
               </div>
             </div>
           ))}
@@ -241,20 +315,23 @@ export default function ArtistProfileView({ artist, arts }: Props) {
             justifyContent: "center",
             alignItems: "center",
             zIndex: 1000,
+            padding: 20,
           }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             style={{
               background: "#fff",
-              padding: 20,
+              padding: 24,
               maxWidth: 600,
+              width: "100%",
               maxHeight: "70vh",
               overflowY: "auto",
               fontFamily: "Avenir, sans-serif",
               fontSize: 14,
-              lineHeight: 1.6,
+              lineHeight: 1.7,
               whiteSpace: "pre-wrap",
+              borderRadius: 4,
             }}
           >
             {modalContent}
