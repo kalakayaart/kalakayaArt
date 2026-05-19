@@ -1,20 +1,26 @@
-import ArtPage from "./ArtPage";
-import { fetchAllArts } from "@/lib/api";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Art } from "@/Types/artist";
+import { fetchAllArts } from "@/lib/api";
+import ArtPage from "./ArtPage";
 
-// ✅ Force dynamic rendering so Next.js doesn't try to prerender this page during build
-export const dynamic = "force-dynamic";
+export default function Page() {
+  const [arts, setArts] = useState<Art[]>([]);
 
-// ✅ Server Component (Next.js App Router)
-export default async function Page() {
-  let arts: Art[] = [];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const artsData = await fetchAllArts();
+        setArts(artsData);
+      } catch (err) {
+        console.error("Failed to load arts:", err);
+        setArts([]);
+      }
+    };
 
-  try {
-    arts = await fetchAllArts();
-  } catch (error) {
-    console.error("Failed to fetch arts:", error);
-    arts = [];
-  }
+    loadData();
+  }, []);
 
   return <ArtPage arts={arts} />;
 }

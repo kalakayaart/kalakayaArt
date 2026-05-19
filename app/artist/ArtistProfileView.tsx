@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { Artist, Art } from "@/Types/artist";
-import { API_BASE } from "@/lib/api";
+
 
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/footer";
@@ -31,16 +31,11 @@ export default function ArtistProfileView({
     }
   }, [arts]);
 
-  // Convert relative upload paths → full backend URLs
+  // Relative paths (e.g. /uploads/...) are proxied by Next.js rewrite → localhost:5000
   const getImageUrl = (url?: string) => {
     if (!url) return "";
-
     if (url.startsWith("http")) return url;
-
-    const BASE =
-      API_BASE.replace("/api", "");
-
-    return `${BASE}${url}`;
+    return url; // relative path — works via Next.js /uploads/* proxy
   };
 
   const openModal = (content?: string) => {
@@ -259,16 +254,28 @@ export default function ArtistProfileView({
                 cursor: "pointer",
               }}
             >
-              <img
-                src={getImageUrl(art.image_url)}
-                alt={art.title}
-                className="art-image"
+              <div
                 style={{
                   width: "100%",
-                  height: 420,
-                  objectFit: "cover",
+                  background: "#f5f4f0",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: 200,
                 }}
-              />
+              >
+                <img
+                  src={getImageUrl(art.image_url)}
+                  alt={art.title}
+                  className="art-image"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              </div>
 
               <div
                 style={{

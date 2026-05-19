@@ -48,14 +48,23 @@ export default function ArtDetailView({
           style={{ alignItems: "flex-start" }}
         >
           {/* LEFT IMAGE */}
-          <div className="w-full md:flex-1">
+          <div
+            className="w-full md:flex-1"
+            style={{
+              backgroundColor: "#f5f4f0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 300,
+            }}
+          >
             <img
               src={art.image_url}
               alt={art.title}
               style={{
                 width: "100%",
                 maxHeight: 600,
-                objectFit: "cover",
+                objectFit: "contain",
                 display: "block",
               }}
             />

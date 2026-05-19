@@ -35,7 +35,7 @@ const EMPTY_FORM: ArtistFormData = {
   website: "",
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api";
+const API_BASE = "/api";
 
 // ─── Build multipart FormData ──────────────────────────────────────────────────
 // KEY FIX: photo_url and cv are handled separately from file uploads.
