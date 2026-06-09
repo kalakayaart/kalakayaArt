@@ -32,12 +32,15 @@ interface Art {
   status: ArtStatus;
 }
 
-// FormData here is our app type — distinct from the browser's built-in FormData
-type ArtFormData = Omit<Art, "id" | "artist_name" | "artist_photo">;
+type ArtFormData = Omit<Art, "id" | "artist_name" | "artist_photo"> & {
+  /** Used only when artist_id === 0 and manual entry mode is active */
+  manual_artist_name?: string;
+};
 type ViewMode = "list" | "detail" | "form";
 
 const EMPTY_FORM: ArtFormData = {
   artist_id: 0,
+  manual_artist_name: "",
   title: "",
   year: "",
   medium: "",
@@ -60,19 +63,17 @@ const STATUS_META: Record<ArtStatus, { label: string; bg: string; color: string;
 };
 
 const API_BASE = "/api";
+
 // ─── API ───────────────────────────────────────────────────────────────────────
-//
-// create / update send a multipart/form-data request so multer can handle
-// the optional image file upload (field name: "image").  All other fields are
-// appended as plain strings.  If no new file is chosen the existing image_url
-// string is preserved server-side (backend should keep the old value when the
-// "image" file field is absent).
 
 function buildMultipart(data: ArtFormData, imageFile: File | null): globalThis.FormData {
   const fd = new globalThis.FormData();
 
-  // Scalar fields
   fd.append("artist_id",   String(data.artist_id));
+  // Send manual name if no artist_id is selected
+  if (data.artist_id === 0 && data.manual_artist_name) {
+    fd.append("manual_artist_name", data.manual_artist_name);
+  }
   fd.append("title",       data.title);
   fd.append("year",        data.year);
   fd.append("medium",      data.medium);
@@ -85,11 +86,9 @@ function buildMultipart(data: ArtFormData, imageFile: File | null): globalThis.F
   fd.append("status",      data.status);
   fd.append("price",       data.price !== null ? String(data.price) : "");
 
-  // Real file — multer expects field name "image"
   if (imageFile) {
     fd.append("image", imageFile);
   } else if (data.image_url) {
-    // No new file but an existing URL: let the server know to keep it
     fd.append("image_url", data.image_url);
   }
 
@@ -102,22 +101,16 @@ const api = {
       fetch(`${API_BASE}/arts`).then(r => r.json()),
     byId: (id: number): Promise<Art> =>
       fetch(`${API_BASE}/arts/${id}`).then(r => r.json()),
-
-    // POST multipart/form-data — DO NOT set Content-Type header; the browser
-    // sets it automatically with the correct boundary for FormData.
     create: (data: ArtFormData, imageFile: File | null): Promise<Art> =>
       fetch(`${API_BASE}/arts`, {
         method: "POST",
         body: buildMultipart(data, imageFile),
       }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-
-    // PUT multipart/form-data
     update: (id: number, data: ArtFormData, imageFile: File | null): Promise<Art> =>
       fetch(`${API_BASE}/arts/${id}`, {
         method: "PUT",
         body: buildMultipart(data, imageFile),
       }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
-
     delete: (id: number): Promise<void> =>
       fetch(`${API_BASE}/arts/${id}`, { method: "DELETE" })
         .then(r => { if (!r.ok) throw new Error(); }),
@@ -129,18 +122,12 @@ const api = {
 };
 
 // ─── Image Uploader ────────────────────────────────────────────────────────────
-//
-// Keeps a real File object in state and exposes a local object-URL preview.
-// The File is what gets appended to FormData and sent to multer.
 
-const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB — match multer limit
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 interface ImageUploaderProps {
-  /** Existing URL (from server) shown when no new file is staged yet */
   existingUrl?: string;
-  /** Called with the chosen File (or null when cleared) */
   onFileChange: (file: File | null) => void;
-  /** Currently staged File (controlled) */
   stagedFile: File | null;
 }
 
@@ -149,7 +136,6 @@ function ImageUploader({ existingUrl, onFileChange, stagedFile }: ImageUploaderP
   const [dragging, setDragging] = useState(false);
   const [sizeError, setSizeError] = useState(false);
 
-  // Revoke previous object-URL on unmount / file change to avoid memory leaks
   const previewUrl = useRef<string | null>(null);
   useEffect(() => {
     if (stagedFile) {
@@ -183,7 +169,6 @@ function ImageUploader({ existingUrl, onFileChange, stagedFile }: ImageUploaderP
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  // What to preview: a freshly picked file takes precedence over the existing URL
   const displayUrl = stagedFile ? URL.createObjectURL(stagedFile) : existingUrl;
   const hasPreview = !!displayUrl;
 
@@ -352,6 +337,130 @@ function Field({ label, name, value, onChange, type = "text", placeholder = "", 
   );
 }
 
+// ─── Artist Selector (select from list OR type manually) ──────────────────────
+
+type ArtistInputMode = "select" | "manual";
+
+interface ArtistSelectorProps {
+  artists: Artist[];
+  artistId: number;
+  manualName: string;
+  onArtistIdChange: (id: number) => void;
+  onManualNameChange: (name: string) => void;
+}
+
+function ArtistSelector({ artists, artistId, manualName, onArtistIdChange, onManualNameChange }: ArtistSelectorProps) {
+  const [mode, setMode] = useState<ArtistInputMode>(artistId !== 0 ? "select" : "select");
+  const selectedArtist = artists.find(a => a.id === Number(artistId));
+
+  const switchToSelect = () => {
+    setMode("select");
+    onManualNameChange("");
+  };
+
+  const switchToManual = () => {
+    setMode("manual");
+    onArtistIdChange(0);
+  };
+
+  const tabBase: React.CSSProperties = {
+    flex: 1,
+    padding: "6px 0",
+    fontSize: 12,
+    fontWeight: 500,
+    border: "none",
+    borderRadius: 6,
+    cursor: "pointer",
+    fontFamily: "inherit",
+    transition: "background 0.15s, color 0.15s",
+  };
+
+  return (
+    <div style={{ marginBottom: 20, padding: 16, background: "#F8F7F4", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.08)" }}>
+      {/* Label + mode toggle */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+        <label style={{ fontSize: 12, color: "#5F5E5A", fontWeight: 500 }}>
+          Artist <span style={{ color: "#E24B4A" }}>*</span>
+        </label>
+        {/* Pill toggle */}
+        <div style={{ display: "flex", background: "rgba(0,0,0,0.07)", borderRadius: 8, padding: 3, gap: 2 }}>
+          <button
+            type="button"
+            onClick={switchToSelect}
+            style={{
+              ...tabBase,
+              background: mode === "select" ? "#fff" : "transparent",
+              color: mode === "select" ? "#1a1a1a" : "#888780",
+              boxShadow: mode === "select" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+              padding: "5px 14px",
+            }}
+          >
+            For Represented Art
+          </button>
+          <button
+            type="button"
+            onClick={switchToManual}
+            style={{
+              ...tabBase,
+              background: mode === "manual" ? "#fff" : "transparent",
+              color: mode === "manual" ? "#1a1a1a" : "#888780",
+              boxShadow: mode === "manual" ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+              padding: "5px 14px",
+            }}
+          >
+            For Other Art
+          </button>
+        </div>
+      </div>
+
+      {mode === "select" ? (
+        <>
+          <select
+            value={artistId}
+            onChange={e => onArtistIdChange(Number(e.target.value))}
+            required
+            style={{ width: "100%", padding: "9px 12px", fontSize: 13, border: "0.5px solid rgba(0,0,0,0.18)", borderRadius: 8, background: "#fff", color: "#1a1a1a", fontFamily: "inherit", outline: "none" }}
+          >
+            <option value={0}>Select an artist…</option>
+            {artists.map(a => (
+              <option key={a.id} value={a.id}>
+                {a.full_name}{a.nationality ? ` (${a.nationality})` : ""}
+              </option>
+            ))}
+          </select>
+
+          {selectedArtist && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 6, overflow: "hidden", background: "#D3D1C7", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {selectedArtist.photo_url
+                  ? <img src={selectedArtist.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#888780" strokeWidth={1.5}><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 500, color: "#1a1a1a" }}>{selectedArtist.full_name}</div>
+            </div>
+          )}
+        </>
+      ) : (
+        <div>
+          <input
+            type="text"
+            placeholder="e.g. Pablo Picasso"
+            value={manualName}
+            onChange={e => onManualNameChange(e.target.value)}
+            required
+            autoFocus
+            style={{ width: "100%", padding: "9px 12px", fontSize: 13, border: "0.5px solid rgba(0,0,0,0.18)", borderRadius: 8, background: "#fff", color: "#1a1a1a", fontFamily: "inherit", outline: "none" }}
+          />
+          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#888780" }}>
+            <svg width={12} height={12} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.8}><circle cx="8" cy="8" r="6" /><path d="M8 7v5M8 5.5v.5" /></svg>
+            This artist won't be added to your artist list — just linked by name to this artwork.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Detail View ───────────────────────────────────────────────────────────────
 
 function ArtDetail({ art, onEdit, onBack, onDelete }: { art: Art; onEdit: () => void; onBack: () => void; onDelete: () => void }) {
@@ -424,14 +533,15 @@ function ArtForm({ initial, artists, onSubmit, onCancel, loading, defaultArtistI
     artist_id: defaultArtistId ?? initial.artist_id,
   });
 
-  // The real File object — null means "no new file chosen"
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const isEdit = initial.artist_id !== 0 && initial.title !== "";
   const set = (name: keyof ArtFormData, val: string | number | null) =>
     setForm(prev => ({ ...prev, [name]: val }));
 
-  const selectedArtist = artists.find(a => a.id === Number(form.artist_id));
+  // Determine if form is submittable:
+  // Either a dropdown artist is picked, OR manual name is non-empty
+  const hasArtist = form.artist_id !== 0 || (form.manual_artist_name ?? "").trim().length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -448,26 +558,14 @@ function ArtForm({ initial, artists, onSubmit, onCancel, loading, defaultArtistI
         </div>
 
         <form onSubmit={handleSubmit} style={{ padding: 24 }}>
-          {/* Artist selector */}
-          <div style={{ marginBottom: 20, padding: 16, background: "#F8F7F4", borderRadius: 10, border: "0.5px solid rgba(0,0,0,0.08)" }}>
-            <label style={{ fontSize: 12, color: "#5F5E5A", fontWeight: 500, display: "block", marginBottom: 8 }}>
-              Artist <span style={{ color: "#E24B4A" }}>*</span>
-            </label>
-            <select value={form.artist_id} onChange={e => set("artist_id", Number(e.target.value))} required style={{ width: "100%", padding: "9px 12px", fontSize: 13, border: "0.5px solid rgba(0,0,0,0.18)", borderRadius: 8, background: "#fff", color: "#1a1a1a", fontFamily: "inherit", outline: "none" }}>
-              <option value={0}>Select an artist…</option>
-              {artists.map(a => <option key={a.id} value={a.id}>{a.full_name}{a.nationality ? ` (${a.nationality})` : ""}</option>)}
-            </select>
-            {selectedArtist && (
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 10 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 6, overflow: "hidden", background: "#D3D1C7", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {selectedArtist.photo_url
-                    ? <img src={selectedArtist.photo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    : <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#888780" strokeWidth={1.5}><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" /></svg>}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 500, color: "#1a1a1a" }}>{selectedArtist.full_name}</div>
-              </div>
-            )}
-          </div>
+          {/* Artist selector — supports dropdown or manual text entry */}
+          <ArtistSelector
+            artists={artists}
+            artistId={form.artist_id}
+            manualName={form.manual_artist_name ?? ""}
+            onArtistIdChange={id => set("artist_id", id)}
+            onManualNameChange={name => set("manual_artist_name", name)}
+          />
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 20px" }}>
             <div style={{ gridColumn: "1 / -1" }}>
@@ -479,14 +577,12 @@ function ArtForm({ initial, artists, onSubmit, onCancel, loading, defaultArtistI
             <Field label="Medium" name="medium" value={form.medium} onChange={set} placeholder="e.g. Oil on Canvas" />
             <Field label="Dimensions" name="dimensions" value={form.dimensions} onChange={set} placeholder="e.g. 94.9 × 144.9 × 11.4 cm" />
 
-            {/* Real-file uploader — passes File object up, not base64 */}
             <div style={{ gridColumn: "1 / -1" }}>
               <ImageUploader
                 existingUrl={form.image_url}
                 stagedFile={imageFile}
                 onFileChange={file => {
                   setImageFile(file);
-                  // If cleared, also wipe the stored URL so the preview disappears
                   if (!file) set("image_url", "");
                 }}
               />
@@ -513,7 +609,7 @@ function ArtForm({ initial, artists, onSubmit, onCancel, loading, defaultArtistI
 
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 16, borderTop: "0.5px solid rgba(0,0,0,0.08)", marginTop: 8 }}>
             <button type="button" onClick={onCancel} style={{ padding: "9px 20px", fontSize: 13, borderRadius: 8, border: "0.5px solid rgba(0,0,0,0.15)", background: "transparent", color: "#5F5E5A", cursor: "pointer", fontFamily: "inherit" }}>Cancel</button>
-            <button type="submit" disabled={loading || !form.title.trim() || !form.artist_id}
+            <button type="submit" disabled={loading || !form.title.trim() || !hasArtist}
               style={{ padding: "9px 24px", fontSize: 13, fontWeight: 500, borderRadius: 8, border: "none", background: loading ? "#B5D4F4" : "#185FA5", color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
               {loading ? "Saving…" : isEdit ? "Save changes" : "Add artwork"}
             </button>
@@ -613,7 +709,6 @@ export default function ArtPage() {
     setView("form");
   };
 
-  // Now receives both the field data AND the optional File
   const handleSubmit = async (data: ArtFormData, imageFile: File | null) => {
     setSaving(true);
     try {

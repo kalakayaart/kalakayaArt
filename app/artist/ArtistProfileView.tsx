@@ -172,6 +172,7 @@ export default function ArtistProfileView({
                   fontWeight: 500,
                   textTransform: "uppercase",
                   letterSpacing: "0.04em",
+                  color: "#000",
                 }}
               >
                 {artist.full_name}
@@ -208,6 +209,7 @@ export default function ArtistProfileView({
                   style={{
                     textDecoration: "underline",
                     cursor: "pointer",
+                    color: "#000",
                   }}
                 >
                   Exhibitions
@@ -228,6 +230,7 @@ export default function ArtistProfileView({
               fontSize: 13,
               lineHeight: 1.7,
               whiteSpace: "pre-wrap",
+              color: "#000",
             }}
           >
             {artist.bio}
@@ -273,6 +276,7 @@ export default function ArtistProfileView({
                     height: "auto",
                     objectFit: "contain",
                     display: "block",
+                    
                   }}
                 />
               </div>
@@ -288,20 +292,21 @@ export default function ArtistProfileView({
                   style={{
                     fontSize: 15,
                     fontWeight: 500,
+                    color: "#000",
                   }}
                 >
                   {art.title}
                 </div>
 
-                <div style={{ fontSize: 13 }}>
+                <div style={{ fontSize: 13, color: "#000" }}>
                   {art.year ?? "—"}
                 </div>
 
-                <div style={{ fontSize: 13 }}>
+                <div style={{ fontSize: 13, color: "#000" }}>
                   {art.medium ?? "—"}
                 </div>
 
-                <div style={{ fontSize: 13 }}>
+                <div style={{ fontSize: 13, color: "#000" }}>
                   {art.dimensions ?? "—"}
                 </div>
               </div>

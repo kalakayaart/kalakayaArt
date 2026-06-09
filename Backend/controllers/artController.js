@@ -5,11 +5,9 @@ const path = require("path");
 // ─── Helper: build image URL ───────────────────────────────────────────────────
 
 const getImageUrl = (req) => {
-  // New file uploaded by multer
   if (req.file) {
     return `/uploads/art/${req.file.filename}`;
   }
-  // Frontend sent back existing URL — strip domain, store only path
   const existing = req.body.image_url;
   if (!existing) return null;
   if (existing.startsWith("http")) {
@@ -41,15 +39,53 @@ const deleteFile = (filePath) => {
   });
 };
 
+// ─── Helper: resolve artist_id and manual_artist_name from request body ───────
+//
+// Rules:
+//   - If artist_id is a non-zero number  → linked artist, manual_artist_name = null
+//   - If artist_id is 0 / missing / null → manual entry, artist_id = null
+
+const resolveArtist = (body) => {
+  const rawId = body.artist_id;
+  const parsedId = rawId !== undefined && rawId !== null && rawId !== ""
+    ? parseInt(rawId, 10)
+    : 0;
+
+  if (parsedId && parsedId !== 0) {
+    return { artist_id: parsedId, manual_artist_name: null };
+  }
+
+  return {
+    artist_id: null,
+    manual_artist_name: body.manual_artist_name?.trim() || null,
+  };
+};
+
 // ─── Helper: format art row for response ──────────────────────────────────────
+//
+// artist_name is resolved via COALESCE in SQL, so it's always present.
 
 const formatArt = (req, row) => ({
   ...row,
-  image_url: buildUrl(req, row.image_url),
-  // BUG 1 FIX: artist_photo also needs full URL — was returned as raw path
+  image_url:    buildUrl(req, row.image_url),
   artist_photo: buildUrl(req, row.artist_photo),
-  price: row.price !== null ? Number(row.price) : null,
+  price:        row.price !== null ? Number(row.price) : null,
 });
+
+// ─── Shared SELECT snippet ─────────────────────────────────────────────────────
+//
+// COALESCE picks the linked artist's name first, falls back to manual entry.
+// LEFT JOIN so artworks without a linked artist still appear.
+
+const ART_SELECT = `
+  SELECT
+    a.*,
+    COALESCE(ar.full_name, a.manual_artist_name) AS artist_name,
+    ar.photo_url                                  AS artist_photo,
+    ar.nationality                                AS artist_nationality
+  FROM arts a
+  LEFT JOIN artists ar ON a.artist_id = ar.id
+`;
 
 // ─── GET ALL ───────────────────────────────────────────────────────────────────
 
@@ -57,17 +93,9 @@ const getArts = async (req, res) => {
   try {
     const { artist_id } = req.query;
 
-    let query = `
-      SELECT 
-        a.*,
-        ar.full_name   AS artist_name,
-        ar.photo_url   AS artist_photo,
-        ar.nationality AS artist_nationality
-      FROM arts a
-      LEFT JOIN artists ar ON a.artist_id = ar.id
-    `;
-
+    let query = ART_SELECT;
     const params = [];
+
     if (artist_id) {
       query += " WHERE a.artist_id = ?";
       params.push(artist_id);
@@ -88,10 +116,7 @@ const getArts = async (req, res) => {
 const getArtById = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT a.*, ar.full_name AS artist_name, ar.photo_url AS artist_photo
-       FROM arts a
-       LEFT JOIN artists ar ON a.artist_id = ar.id
-       WHERE a.id = ?`,
+      ART_SELECT + " WHERE a.id = ?",
       [req.params.id]
     );
 
@@ -110,38 +135,47 @@ const getArtById = async (req, res) => {
 
 const createArt = async (req, res) => {
   try {
-    const {
-      artist_id, title, year, medium, dimensions,
-      description, enquire, exhibited, publication, provenance,
-      status,
-    } = req.body;
+    const { title, year, medium, dimensions,
+            description, enquire, exhibited, publication, provenance,
+            status } = req.body;
 
-    // BUG 2 FIX: price must be parsed as float — raw string "85000" or ""
     const price = req.body.price !== "" && req.body.price != null
       ? parseFloat(req.body.price)
       : null;
 
-    if (!artist_id || !title?.trim()) {
-      return res.status(400).json({ error: "artist_id and title are required" });
+    // Resolve artist — either linked or manual
+    const { artist_id, manual_artist_name } = resolveArtist(req.body);
+
+    // Must have at least one artist identifier and a title
+    if (!title?.trim()) {
+      return res.status(400).json({ error: "title is required" });
+    }
+    if (!artist_id && !manual_artist_name) {
+      return res.status(400).json({ error: "Either select an artist or enter a name manually" });
     }
 
-    const [artistCheck] = await pool.query(
-      "SELECT id FROM artists WHERE id = ?", [artist_id]
-    );
-    if (!artistCheck.length) {
-      return res.status(404).json({ error: "Artist not found" });
+    // If linked artist provided, verify it exists
+    if (artist_id) {
+      const [artistCheck] = await pool.query(
+        "SELECT id FROM artists WHERE id = ?", [artist_id]
+      );
+      if (!artistCheck.length) {
+        return res.status(404).json({ error: "Artist not found" });
+      }
     }
 
     const image_url = getImageUrl(req);
 
     const [result] = await pool.query(
       `INSERT INTO arts (
-        artist_id, title, year, medium, dimensions, image_url,
+        artist_id, manual_artist_name,
+        title, year, medium, dimensions, image_url,
         description, enquire, exhibited, publication, provenance,
         price, status
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        artist_id, title.trim(), year || null, medium || null,
+        artist_id, manual_artist_name,
+        title.trim(), year || null, medium || null,
         dimensions || null, image_url, description || null,
         enquire || null, exhibited || null, publication || null,
         provenance || null, price, status || "available",
@@ -149,10 +183,7 @@ const createArt = async (req, res) => {
     );
 
     const [rows] = await pool.query(
-      `SELECT a.*, ar.full_name AS artist_name, ar.photo_url AS artist_photo
-       FROM arts a
-       LEFT JOIN artists ar ON a.artist_id = ar.id
-       WHERE a.id = ?`,
+      ART_SELECT + " WHERE a.id = ?",
       [result.insertId]
     );
 
@@ -169,7 +200,6 @@ const updateArt = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // BUG 3 FIX: check artwork exists before updating
     const [existing] = await pool.query(
       "SELECT * FROM arts WHERE id = ?", [id]
     );
@@ -179,17 +209,32 @@ const updateArt = async (req, res) => {
 
     const current = existing[0];
 
-    const {
-      artist_id, title, year, medium, dimensions,
-      description, enquire, exhibited, publication, provenance, status,
-    } = req.body;
+    const { title, year, medium, dimensions,
+            description, enquire, exhibited, publication, provenance, status } = req.body;
 
-    // BUG 2 FIX: parse price consistently
     const price = req.body.price !== "" && req.body.price != null
       ? parseFloat(req.body.price)
       : null;
 
-    // BUG 4 FIX: delete old image from disk when a new one is uploaded
+    // Resolve artist — either linked or manual
+    const { artist_id, manual_artist_name } = resolveArtist(req.body);
+
+    // Must still have at least one artist identifier
+    if (!artist_id && !manual_artist_name) {
+      return res.status(400).json({ error: "Either select an artist or enter a name manually" });
+    }
+
+    // If linked artist provided, verify it exists
+    if (artist_id) {
+      const [artistCheck] = await pool.query(
+        "SELECT id FROM artists WHERE id = ?", [artist_id]
+      );
+      if (!artistCheck.length) {
+        return res.status(404).json({ error: "Artist not found" });
+      }
+    }
+
+    // Handle image: replace, clear, or keep
     let image_url;
     if (req.file) {
       deleteFile(current.image_url);
@@ -197,11 +242,9 @@ const updateArt = async (req, res) => {
     } else {
       const existing_url = req.body.image_url;
       if (!existing_url) {
-        // Frontend explicitly cleared the image
         deleteFile(current.image_url);
         image_url = null;
       } else {
-        // Keep existing — strip domain if full URL
         image_url = existing_url.startsWith("http")
           ? new URL(existing_url).pathname
           : existing_url;
@@ -210,33 +253,32 @@ const updateArt = async (req, res) => {
 
     await pool.query(
       `UPDATE arts SET
-        artist_id=?, title=?, year=?, medium=?, dimensions=?, image_url=?,
+        artist_id=?, manual_artist_name=?,
+        title=?, year=?, medium=?, dimensions=?, image_url=?,
         description=?, enquire=?, exhibited=?, publication=?, provenance=?,
         price=?, status=?
        WHERE id=?`,
       [
-        artist_id       ?? current.artist_id,
-        title?.trim()   ?? current.title,
-        year            ?? current.year,
-        medium          ?? current.medium,
-        dimensions      ?? current.dimensions,
+        artist_id            ?? current.artist_id,
+        manual_artist_name   ?? current.manual_artist_name,
+        title?.trim()        ?? current.title,
+        year                 ?? current.year,
+        medium               ?? current.medium,
+        dimensions           ?? current.dimensions,
         image_url,
-        description     ?? current.description,
-        enquire         ?? current.enquire,
-        exhibited       ?? current.exhibited,
-        publication     ?? current.publication,
-        provenance      ?? current.provenance,
+        description          ?? current.description,
+        enquire              ?? current.enquire,
+        exhibited            ?? current.exhibited,
+        publication          ?? current.publication,
+        provenance           ?? current.provenance,
         price,
-        status          ?? current.status,
+        status               ?? current.status,
         id,
       ]
     );
 
     const [rows] = await pool.query(
-      `SELECT a.*, ar.full_name AS artist_name, ar.photo_url AS artist_photo
-       FROM arts a
-       LEFT JOIN artists ar ON a.artist_id = ar.id
-       WHERE a.id = ?`,
+      ART_SELECT + " WHERE a.id = ?",
       [id]
     );
 
@@ -251,7 +293,6 @@ const updateArt = async (req, res) => {
 
 const deleteArt = async (req, res) => {
   try {
-    // BUG 5 FIX: delete image file from disk before removing DB row
     const [rows] = await pool.query(
       "SELECT image_url FROM arts WHERE id = ?", [req.params.id]
     );

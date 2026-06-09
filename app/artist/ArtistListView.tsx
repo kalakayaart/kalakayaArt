@@ -14,18 +14,16 @@ export default function ArtistListView({
   allArts: Art[];
   onSelect: (a: Artist) => void;
 }) {
-  // Split into 2 columns
+  // Desktop split into 2 columns
   const col1 = artists.filter((_, i) => i % 2 === 0);
   const col2 = artists.filter((_, i) => i % 2 === 1);
 
-  const maxRows = 6; // fixed design requirement
+  const maxRows = Math.max(col1.length, col2.length);
 
   return (
     <div style={{ background: "#fff" }}>
-      {/* HEADER MOVED OUTSIDE PADDING (FIXED) */}
       <Header />
 
-      {/* PAGE CONTENT */}
       <div className="px-4 md:px-[48px] lg:px-[60px] pb-10">
         {/* Heading */}
         <h1
@@ -34,17 +32,45 @@ export default function ArtistListView({
             fontFamily: "'Mustica Pro', sans-serif",
             fontWeight: 600,
             lineHeight: "100%",
+            color: "#000",
           }}
         >
           Represented Artists
         </h1>
 
-        {/* Main Layout */}
-        <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] lg:gap-[60px] items-start">
+        {/* MOBILE VIEW */}
+        <div className="block lg:hidden">
+          <div className="flex flex-col gap-6">
+            {artists.map((artist) => (
+              <div
+                key={artist.id}
+                className="artist-name cursor-pointer"
+                onClick={() => onSelect(artist)}
+                style={{
+                  fontFamily: "'EB Garamond', serif",
+                  fontWeight: 400,
+                  fontSize: "22px",
+                  lineHeight: "100%",
+                  textTransform: "uppercase",
+                  color: "#000",
+                }}
+              >
+                {artist.full_name}
+              </div>
+            ))}
+          </div>
 
-          {/* ───── Artist Grid ───── */}
+          {/* SHOW ARTWORKS ONLY ON MOBILE */}
+          <div className="mt-10">
+            <ArtworkSidebar allArts={allArts} />
+          </div>
+        </div>
+
+        {/* DESKTOP VIEW */}
+        <div className="hidden lg:grid lg:grid-cols-[1fr_280px] lg:gap-[60px] items-start">
+          {/* Artist Grid */}
           <div
-            className="w-full ml-0 md:ml-[55px] grid grid-cols-1 sm:grid-cols-2"
+            className="w-full ml-[55px] grid grid-cols-2"
             style={{
               rowGap: "40px",
               columnGap: "60px",
@@ -59,10 +85,9 @@ export default function ArtistListView({
                   style={{
                     fontFamily: "'EB Garamond', serif",
                     fontWeight: 400,
-                    fontSize: "clamp(18px, 3vw, 24px)",
+                    fontSize: "24px",
                     lineHeight: "100%",
                     textTransform: "uppercase",
-                    textAlign: "justify",
                     display: "flex",
                     alignItems: "center",
                     cursor: col1[i] ? "pointer" : "default",
@@ -79,10 +104,9 @@ export default function ArtistListView({
                   style={{
                     fontFamily: "'EB Garamond', serif",
                     fontWeight: 400,
-                    fontSize: "clamp(18px, 3vw, 24px)",
+                    fontSize: "24px",
                     lineHeight: "100%",
                     textTransform: "uppercase",
-                    textAlign: "justify",
                     display: "flex",
                     alignItems: "center",
                     cursor: col2[i] ? "pointer" : "default",
@@ -95,13 +119,12 @@ export default function ArtistListView({
             ))}
           </div>
 
-          {/* ───── Sidebar (hidden on mobile) ───── */}
-          <div className="hidden lg:block">
+          {/* Sidebar only desktop */}
+          <div>
             <ArtworkSidebar allArts={allArts} />
           </div>
         </div>
 
-        {/* Footer */}
         <Footer />
 
         {/* Hover */}
