@@ -24,8 +24,13 @@ export default function ArtDetailView({
       <Header />
 
       {/* MAIN WRAPPER */}
-      <main style={{ flex: 1, padding: "24px 16px 60px" }} className="md:!px-[60px] lg:!px-[100px]">
-
+      <main
+        style={{
+          flex: 1,
+          padding: "24px 16px 60px",
+        }}
+        className="md:!px-[60px] lg:!px-[100px]"
+      >
         {/* BACK BUTTON */}
         <button
           onClick={onBack}
@@ -77,65 +82,131 @@ export default function ArtDetailView({
               display: "flex",
               flexDirection: "column",
               gap: 20,
-              fontFamily: "Avenir, 'Avenir Next', Helvetica Neue, sans-serif",
+              fontFamily:
+                "Avenir, 'Avenir Next', Helvetica Neue, sans-serif",
               color: "#111",
             }}
           >
-            {/* ART INFO BOX */}
+            {/* ART INFO */}
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: 14, fontWeight: 700 }}>
                 {art.artist_name}
               </div>
+
               <div style={{ fontSize: 14, fontWeight: 700 }}>
                 {art.title}
               </div>
-              <div style={{ fontSize: 13 }}>{art.year}</div>
-              <div style={{ fontSize: 13 }}>{art.medium}</div>
-              <div style={{ fontSize: 13 }}>{art.dimensions}</div>
-            </div>
 
-            {/* ENQUIRE SECTION */}
-            <div>
-              <div
-                style={{
-                  fontSize: 24,
-                  fontWeight: 400,
-                  lineHeight: "100%",
-                  marginBottom: 20,
-                }}
-              >
-                Enquire
+              <div style={{ fontSize: 13 }}>
+                {art.year}
               </div>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
-                {/* Exhibited */}
-                <div>
-                  <div style={{ fontSize: 24, fontWeight: 400, marginBottom: 6 }}>
-                    Exhibited
-                  </div>
-                  <div style={{ fontSize: 13, color: "#333", lineHeight: 1.5 }}>
-                    {art.exhibited ?? "Not available"}
-                  </div>
+              <div style={{ fontSize: 13 }}>
+                {art.medium}
+              </div>
+
+              <div style={{ fontSize: 13 }}>
+                {art.dimensions}
+              </div>
+            </div>
+
+            {/* ENQUIRE */}
+<div>
+  <button
+    onClick={() =>
+      (window.location.href =
+        "mailto:info@kalakaya.art")
+    }
+    style={{
+      fontSize: 24,
+      fontWeight: 400,
+      lineHeight: "100%",
+      background: "none",
+      border: "none",
+      padding: 0,
+      color: "inherit",
+      cursor: "pointer",
+      
+    }}
+  >
+    Enquire: <span style={{ fontSize: "18px", textDecoration: "underline" }}>info@kalakaya.art</span>
+  </button>
+</div>
+
+            {/* DETAILS */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 30,
+              }}
+            >
+              {/* Exhibited */}
+              <div>
+                <div
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 400,
+                    marginBottom: 6,
+                  }}
+                >
+                  Exhibited
                 </div>
 
-                {/* Publication */}
-                <div>
-                  <div style={{ fontSize: 24, fontWeight: 400, marginBottom: 6 }}>
-                    Publication
-                  </div>
-                  <div style={{ fontSize: 13, color: "#333", lineHeight: 1.5 }}>
-                    {art.publication ?? "Not available"}
-                  </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "#333",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {art.exhibited ?? "Not available"}
+                </div>
+              </div>
+
+              {/* Publication */}
+              <div>
+                <div
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 400,
+                    marginBottom: 6,
+                  }}
+                >
+                  Publication
                 </div>
 
-                {/* Provenance */}
-                <div>
-                  <div style={{ fontSize: 24, fontWeight: 400, marginBottom: 6 }}>
-                    Provenance
-                  </div>
-                  <div style={{ fontSize: 13, color: "#333", lineHeight: 1.5 }}>
-                    {art.provenance ?? "Not available"}
-                  </div>
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "#333",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {art.publication ?? "Not available"}
+                </div>
+              </div>
+
+              {/* Provenance */}
+              <div>
+                <div
+                  style={{
+                    fontSize: 24,
+                    fontWeight: 400,
+                    marginBottom: 6,
+                  }}
+                >
+                  Provenance
+                </div>
+
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "#333",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {art.provenance ?? "Not available"}
                 </div>
               </div>
             </div>
@@ -143,7 +214,6 @@ export default function ArtDetailView({
         </div>
       </main>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );

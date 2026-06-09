@@ -86,9 +86,13 @@ const Footer: React.FC = () => {
               <div className="flex items-center gap-2 text-[#000000] ">
                 <PhoneIcon /> +977-9843562694
               </div>
-              <div className="flex items-center gap-2 text-[#000000]">
-                <MailIcon /> info@kalakaya.art
-              </div>
+              <a
+  href={`mailto:info@kalakaya.art?subject=Artwork Enquiry&body=Hello Kalakaya,%0D%0A%0D%0AI would like to enquire about an artwork.%0D%0A`}
+  className="flex items-center gap-2 text-[#000000]"
+>
+  <MailIcon />
+  <span>info@kalakaya.art</span>
+</a>
             </div>
           </div>
 
