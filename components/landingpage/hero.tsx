@@ -6,33 +6,78 @@ import { useEffect, useState } from "react";
 export default function Hero() {
     const slides = [
         {
-            image: "/landingpage/image 1.png",
+            image: "/landingpage/IMG_8206.PNG",
             heroText: `Ordinary people are attracted by colors,
 Women are charmed by ornamentation,
 Connoisseurs prefer the brushwork,
 But the masters admire the line.
   -Vishnudharmottarapurana`,
             artworkDetails: [
-                "Artist Name",
-                "Name of Artwork",
-                "2023",
-                "Medium of Artwork",
-                "07 x 23 x 95",
+                // "Artist Name",
+                // "Name of Artwork",
+                // "2023",
+                // "Medium of Artwork",
+                // "07 x 23 x 95",
             ],
         },
         {
-            image: "/landingpage/hero.png",
+            image: "/landingpage/IMG_8210.JPG",
             heroText: `Power is not an institution,and not a structure;
        neither is it a certain strength we are endowed with; 
       it is the name that one attributes to a complex 
       strategical situation in a particular society.
       -Michel Foucault`,
             artworkDetails: [
-                "Second Artist",
-                "Second Artwork",
-                "2022",
-                "Oil on Canvas",
-                "10 x 30 x 80",
+                // // "Second Artist",
+                // "Second Artwork",
+                // "2022",
+                // "Oil on Canvas",
+                // "10 x 30 x 80",
+            ],
+        },
+        {
+            image: "/landingpage/IMG_8211.JPG",
+            heroText: `Ordinary people are attracted by colors,
+Women are charmed by ornamentation,
+Connoisseurs prefer the brushwork,
+But the masters admire the line.
+  -Vishnudharmottarapurana`,
+            artworkDetails: [
+                // "Artist Name",
+                // "Name of Artwork",
+                // "2023",
+                // "Medium of Artwork",
+                // "07 x 23 x 95",
+            ],
+        },
+        {
+            image: "/landingpage/IMG_8213.JPG",
+            heroText: `Ordinary people are attracted by colors,
+Women are charmed by ornamentation,
+Connoisseurs prefer the brushwork,
+But the masters admire the line.
+  -Vishnudharmottarapurana`,
+            artworkDetails: [
+                // "Artist Name",
+                // "Name of Artwork",
+                // "2023",
+                // "Medium of Artwork",
+                // "07 x 23 x 95",
+            ],
+        },
+         {
+            image: "/landingpage/IMG_8214.JPG",
+            heroText: `Ordinary people are attracted by colors,
+Women are charmed by ornamentation,
+Connoisseurs prefer the brushwork,
+But the masters admire the line.
+  -Vishnudharmottarapurana`,
+            artworkDetails: [
+                // "Artist Name",
+                // "Name of Artwork",
+                // "2023",
+                // "Medium of Artwork",
+                // "07 x 23 x 95",
             ],
         },
     ];
