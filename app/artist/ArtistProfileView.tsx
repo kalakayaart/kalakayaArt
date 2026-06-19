@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { Artist, Art } from "@/Types/artist";
 
-
 import Header from "@/components/header/Header";
 import Footer from "@/components/footer/footer";
 
@@ -14,28 +13,23 @@ type Props = {
   arts: Art[];
 };
 
-export default function ArtistProfileView({
-  artist,
-  arts,
-}: Props) {
+export default function ArtistProfileView({ artist, arts }: Props) {
   const router = useRouter();
 
   const [selectedArt, setSelectedArt] = useState<Art | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState("");
 
-  // Default selected artwork
   useEffect(() => {
     if (arts?.length > 0) {
       setSelectedArt(arts[0]);
     }
   }, [arts]);
 
-  // Relative paths (e.g. /uploads/...) are proxied by Next.js rewrite → localhost:5000
   const getImageUrl = (url?: string) => {
     if (!url) return "";
     if (url.startsWith("http")) return url;
-    return url; // relative path — works via Next.js /uploads/* proxy
+    return url;
   };
 
   const openModal = (content?: string) => {
@@ -59,7 +53,6 @@ export default function ArtistProfileView({
     >
       <Header />
 
-      {/* Back Button */}
       <div
         style={{
           display: "flex",
@@ -82,7 +75,6 @@ export default function ArtistProfileView({
         </button>
       </div>
 
-      {/* Responsive Styles */}
       <style jsx>{`
         .profile-main {
           display: grid;
@@ -133,9 +125,7 @@ export default function ArtistProfileView({
       `}</style>
 
       <main className="profile-main">
-        {/* LEFT SECTION */}
         <div>
-          {/* Artist Header */}
           <div
             className="artist-header"
             style={{
@@ -203,9 +193,7 @@ export default function ArtistProfileView({
                 )}
 
                 <span
-                  onClick={() =>
-                    openModal(artist.exhibitions)
-                  }
+                  onClick={() => openModal(artist.exhibitions)}
                   style={{
                     textDecoration: "underline",
                     cursor: "pointer",
@@ -218,7 +206,6 @@ export default function ArtistProfileView({
             </div>
           </div>
 
-          {/* Bio */}
           <div
             className="artist-bio"
             style={{
@@ -237,7 +224,6 @@ export default function ArtistProfileView({
           </div>
         </div>
 
-        {/* RIGHT SECTION */}
         <div
           className="art-list"
           style={{
@@ -253,9 +239,7 @@ export default function ArtistProfileView({
             <div
               key={`${art.id}-${index}`}
               onClick={() => setSelectedArt(art)}
-              style={{
-                cursor: "pointer",
-              }}
+              style={{ cursor: "pointer" }}
             >
               <div
                 style={{
@@ -276,7 +260,6 @@ export default function ArtistProfileView({
                     height: "auto",
                     objectFit: "contain",
                     display: "block",
-                    
                   }}
                 />
               </div>
@@ -298,24 +281,15 @@ export default function ArtistProfileView({
                   {art.title}
                 </div>
 
-                <div style={{ fontSize: 13, color: "#000" }}>
-                  {art.year ?? "—"}
-                </div>
-
-                <div style={{ fontSize: 13, color: "#000" }}>
-                  {art.medium ?? "—"}
-                </div>
-
-                <div style={{ fontSize: 13, color: "#000" }}>
-                  {art.dimensions ?? "—"}
-                </div>
+                <div style={{ fontSize: 13, color: "#000" }}>{art.year ?? "—"}</div>
+                <div style={{ fontSize: 13, color: "#000" }}>{art.medium ?? "—"}</div>
+                <div style={{ fontSize: 13, color: "#000" }}>{art.dimensions ?? "—"}</div>
               </div>
             </div>
           ))}
         </div>
       </main>
 
-      {/* MODAL */}
       {showModal && (
         <div
           onClick={() => setShowModal(false)}

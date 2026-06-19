@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
+const Sentry = require("@sentry/node");
 require("dotenv").config();
 
 const artistRoutes = require("./routes/artistRoutes");
@@ -8,6 +9,16 @@ const artRoutes = require("./routes/artroute");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const sentryDsn = process.env.SENTRY_DSN;
+
+Sentry.init({
+  dsn: sentryDsn,
+  enabled: Boolean(sentryDsn),
+  environment: process.env.NODE_ENV,
+  debug: false,
+  tracesSampleRate: 0,
+  integrations: [Sentry.expressIntegration()],
+});
 
 /**
  * Middleware
@@ -35,6 +46,8 @@ app.use("/api/arts", artRoutes);
 app.get("/", (req, res) => {
   res.status(200).send("Kalakaya Artist API is running ✅");
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 /**
  * Global error handler

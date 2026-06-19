@@ -47,6 +47,7 @@ export default function ArtCard({
           display: "flex",
           flexDirection: "column",
           gap: 2,
+	  color: "#000",
           fontFamily:
             "Avenir, 'Avenir Next', Helvetica Neue, sans-serif",
         }}
@@ -56,7 +57,7 @@ export default function ArtCard({
           style={{
             fontSize: 11,
             fontWeight: 700,
-            color: "#111",
+            color: "#000",
             lineHeight: 1.2,
           }}
         >
@@ -68,7 +69,7 @@ export default function ArtCard({
           style={{
             fontSize: 12,
             fontWeight: 700,
-            color: "#111",
+            color: "#000",
             lineHeight: 1.3,
           }}
         >

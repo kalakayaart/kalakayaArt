@@ -18,9 +18,17 @@ conn.on('ready', () => {
       console.log('STDERR: ' + data);
     });
   });
-}).connect({
-  host: 'kalakaya.art',
-  port: 22,
-  username: 'dev1',
-  password: 'Dev1234!'
 });
+
+const sshConfig = {
+  host: process.env.SSH_HOST,
+  port: Number(process.env.SSH_PORT || 22),
+  username: process.env.SSH_USER,
+  password: process.env.SSH_PASSWORD,
+};
+
+if (!sshConfig.host || !sshConfig.username || !sshConfig.password) {
+  throw new Error('Missing SSH_HOST, SSH_USER, or SSH_PASSWORD environment variables');
+}
+
+conn.connect(sshConfig);
