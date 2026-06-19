@@ -1,0 +1,67 @@
+name: Production Deploy
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: kalakaya-prod-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to production VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            cd /home/dev1/kalakayaArt
+
+            echo "== Preflight =="
+            git remote -v
+            git status --short --branch
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "Working tree is dirty on the server. Refusing deploy to avoid overwriting live changes."
+              exit 1
+            fi
+
+            echo "== Sync code =="
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+
+            echo "== Install frontend dependencies =="
+            npm install
+
+            echo "== Build frontend =="
+            npm run build
+
+            echo "== Install backend dependencies =="
+            cd Backend
+            npm install
+            cd ..
+
+            echo "== Restart PM2 services =="
+            pm2 restart Frontend --update-env
+            pm2 restart backend --update-env
+
+            echo "== Post-deploy verification =="
+            pm2 status
+            curl -fsS http://127.0.0.1:3001 >/dev/null
+            curl -fsS http://127.0.0.1:5000 >/dev/null
+
+            echo "Deployment completed successfully"
